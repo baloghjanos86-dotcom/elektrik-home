@@ -24,17 +24,15 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
 
-      - name: Pubspec és Assets beallitasa valamint Main.dart generalas
+      - name: Teljes App generalas es Build
         run: |
-          # 1. Hivatalos Flutter projekt generalasa
           flutter create . --project-name elektrik_home --org hu.elektrikhome
           
-          # 2. pubspec.yaml letrehozasa a kepek (assets) engedelyezesevel
           cat << 'EOF' > pubspec.yaml
           name: elektrik_home
           description: "Elektrik-Home Pro villanyszerelo alkalmazas"
           publish_to: 'none'
-          version: 1.0.2+3
+          version: 1.0.3+4
 
           environment:
             sdk: '>=3.0.0 <4.0.0'
@@ -55,7 +53,6 @@ jobs:
               - assets/images/
           EOF
 
-          # 3. A kesz main.dart letrehoza a kepgaleria aloldallal
           cat << 'EOF' > lib/main.dart
           import 'package:flutter/material.dart';
           import 'dart:math';
@@ -68,7 +65,7 @@ jobs:
             @override
             Widget build(BuildContext context) {
               return MaterialApp(
-                title: 'Elektrik-Home Pro v1.0.2',
+                title: 'Elektrik-Home Pro v1.0.3',
                 debugShowCheckedModeBanner: false,
                 theme: ThemeData(
                   primarySwatch: Colors.amber,
@@ -149,7 +146,7 @@ jobs:
                   title: Column(
                     children: [
                       Text('Elektrik-Home Pro', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-                      Text('Verzió: v1.0.2 (Képgalériával)', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                      Text('Verzió: v1.0.3 (Teljes Adatbázis)', style: TextStyle(fontSize: 12, color: Colors.black54)),
                     ],
                   ),
                   centerTitle: true,
@@ -220,7 +217,277 @@ jobs:
             MenuItemData(this.title, this.subtitle, this.icon, this.color, this.targetScreen);
           }
 
-          // --- 7. KAPCSOLÁSI RAJZOK ÉS KÉPGALÉRIA KÉPERNYŐ ---
+          class TopicSection {
+            final String title;
+            final String subtitle;
+            final List<String> bulletPoints;
+
+            TopicSection(this.title, this.subtitle, this.bulletPoints);
+          }
+
+          class TheoryMenuScreen extends StatelessWidget {
+            final List<TopicSection> chapters = [
+              TopicSection(
+                '1. Lakossági Fizikai Alapok és Számítások',
+                'A kisfeszültségű lakossági hálózatok tervezése és megértése a klasszikus elektrotechnikai törvényeken alapul.',
+                [
+                  'Ohm-törvény: Az áramkörben folyó áramerősség (I) egyenesen arányos a feszültséggel (U) és fordítottan arányos az ellenállással (R). Képlet: I = U / R.',
+                  'Egyfázisú lakossági hálózat (230 V): Hatásos teljesítmény: P = U * I * cos(φ). Tiszta ohmos terhelésnél (cos(φ) = 1): P = U * I.',
+                  'Védelmi Eszközök és Méretezési Alapok (Lakossági): Kismegszakítók (MCB): Zárlat és túlterhelés elleni védelem. Háztartásban leggyakrabban B karakterisztika.',
+                  'Áram-védőkapcsoló (FI-relé / RCD): Érintésvédelemre kiegészítő védelemként szolgál; lakossági környezetben a maximum 30 mA-es érzékenységű egység kötelező a dugaszolóaljzatokhoz.',
+                  'Lakossági vezeték-keresztmetszetek: Világításhoz általában 1,5 mm² (max. 10 - 13 A). Dugaszolóaljzatokhoz legalább 2,5 mm² (max. 16 A).',
+                ],
+              ),
+              TopicSection(
+                '1. Ipari Fizikai Alapok és Számítások',
+                'Nagyobb teljesítményű ipari rendszerek és háromfázisú hálózatok méretezése.',
+                [
+                  'Háromfázisú ipari hálózat (400 V): Hatásos teljesítmény: P = √3 * U_vonali * I_fázis * cos(φ).',
+                  'Védelmi Eszközök (Ipari): Kismegszakítók (MCB) ipari motoroknál C vagy D karakterisztika alkalmazandó a magasabb indítóáramok miatt.',
+                  'Nagyobb teljesítményű ipari fogyasztókhoz 4 mm², 6 mm² vagy annál nagyobb rézvezetékek szükségesek.',
+                  'Ipari feszültségesés számítás: Háromfázisú szimmetrikus áramkör feszültségesése: ΔU = (√3 * L * I * ρ * cos(φ)) / S.',
+                  'Ipari Példa: 11 kW-os gép betáplálása 50 méterről 4 mm²-es rézkábellel tökéletesen megfelel (~1.72% esés).',
+                ],
+              ),
+              TopicSection(
+                '2. Érintésvédelmi Rendszerek (Földelési módok)',
+                'A kisfeszültségű hálózatok áramütés elleni védelme és földelési módjai.',
+                [
+                  'TN-C: A nulla (N) és a védővezető (PE) egyetlen közös vezetőként (PEN) fut a fogyasztóig. (Régebbi épületek, ipari főelosztók).',
+                  'TN-S: A nulla (N) és a védővezető (PE) végig különálló szálként van elvezetve. (Modern lakóépületek, irodák).',
+                  'TN-C-S: A betáplálásban még PEN vezető van, de a fogyasztói főelosztóban szétválik külön N-re és PE-re. (A legelterjedtebb Magyarországon).',
+                  'TT: A transzformátornak van saját földelése, a fogyasztónak pedig egy független helyi földelője. (Kerti épületek, tanyák).',
+                  'IT: A tápláló oldal szigetelt a földtől, vagy nagyimpedanciás földeléssel rendelkezik. (Kórházak műtői, speciális ipari folyamatok).',
+                ],
+              ),
+              TopicSection(
+                '3. Szabványos Jelölések és Színkódok (MSZ HD 60446)',
+                'A kisfeszültségű vezetékek azonosítása szigorú színszabványokhoz kötött.',
+                [
+                  'Fázisvezető (L): Fekete, barna vagy szürke.',
+                  'Nullavezető (N): Kék.',
+                  'Védővezető / Földelés (PE): Zöld-sárga csíkos.',
+                ],
+              ),
+              TopicSection(
+                '4. Főbb Szabványok és Előírások',
+                'A kisfeszültségű berendezések létesítését és üzemeltetését meghatározó szabványok.',
+                [
+                  'MSZ HD 60364 sorozat: Kisfeszültségű villamos berendezések létesítésének alapszabványa.',
+                  'MSZ 447: Kisfeszültségű közcélú elosztóhálózatra való csatlakozások (fogyasztói mérőhelyek).',
+                  'MSZ 1585 (VBSZ): Villamos berendezések üzemeltetése (munkavédelmi szabályok feszültség alatti munkákhoz).',
+                  'MSZ EN 61439 sorozat: Kisfeszültségű kapcsolóberendezések és vezérlőberendezések gyári szabványa (elosztótáblák).',
+                ],
+              ),
+              TopicSection(
+                '5. Feszültségesés és Méretezési Határértékek',
+                'A feszültségesés és vezeték-keresztmetszet kiszámítási alapjai az MSZ HD 60364 szerint.',
+                [
+                  'Világítási áramköröknél: maximum 3% feszültségesés engedélyezett.',
+                  'Egyéb (erőátviteli, fűtési, dugaszolóaljzat) áramköröknél: maximum 5% feszültségesés.',
+                  'Fajlagos ellenállás rézre (70°C): ρ ≈ 0,0225 Ω*mm²/m.',
+                  'Egyfázisú feszültségesés képlet: ΔU = (2 * L * I * ρ * cos(φ)) / S',
+                  'Háromfázisú feszültségesés képlet: ΔU = (√3 * L * I * ρ * cos(φ)) / S',
+                ],
+              ),
+            ];
+
+            @override
+            Widget build(BuildContext context) {
+              return Scaffold(
+                appBar: AppBar(title: Text('Kisfeszültség (LV) Rendszerek')),
+                body: ListView.builder(
+                  padding: EdgeInsets.all(12),
+                  itemCount: chapters.length,
+                  itemBuilder: (context, index) {
+                    final ch = chapters[index];
+                    return Card(
+                      elevation: 2,
+                      margin: EdgeInsets.symmetric(vertical: 6),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.blue.withOpacity(0.15),
+                          child: Text('${index + 1}.', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+                        ),
+                        title: Text(ch.title, style: TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Text(ch.subtitle, maxLines: 2, overflow: TextOverflow.ellipsis),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => TopicDetailScreen(section: ch, themeColor: Colors.blue)),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              );
+            }
+          }
+
+          class FormulasMenuScreen extends StatelessWidget {
+            final List<TopicSection> formulaCategories = [
+              TopicSection(
+                '1. Alapvető egyenáramú és ohmikus képletek',
+                'Tiszta ellenállásos körök összefüggései.',
+                [
+                  'Ohm törvénye: U = I · R',
+                  'Teljesítmény: P = U · I = I² · R = U² / R',
+                  'Elektromos munka: W = P · t',
+                ],
+              ),
+              TopicSection(
+                '2. Vezetékek ellenállása és feszültségesés',
+                'Méretezéshez használt képletek.',
+                [
+                  'Vezeték ellenállása: R = ρ · (l / A) (Réz: 0,0175 Ω·mm²/m)',
+                  'Egyfázisú feszültségesés: ΔU = (2 · l · I · ρ) / A',
+                  'Háromfázisú feszültségesés: ΔU = (√3 · l · I · ρ · cosφ) / A',
+                  'Százalékos esés: ε% = (ΔU / U_n) · 100',
+                ],
+              ),
+              TopicSection(
+                '3. Váltakozó áram és Háromfázisú rendszerek',
+                'Ipari és hálózati teljesítmények.',
+                [
+                  'Hatásos teljesítmény: P = √3 · U_v · I · cosφ',
+                  'Meddő teljesítmény: Q = √3 · U_v · I · sinφ',
+                  'Látszólagos teljesítmény: S = √3 · U_v · I',
+                ],
+              ),
+            ];
+
+            @override
+            Widget build(BuildContext context) {
+              return Scaffold(
+                appBar: AppBar(title: Text('Szakmai Képletgyűjtemény')),
+                body: ListView.builder(
+                  padding: EdgeInsets.all(12),
+                  itemCount: formulaCategories.length,
+                  itemBuilder: (context, index) {
+                    final cat = formulaCategories[index];
+                    return Card(
+                      elevation: 2,
+                      margin: EdgeInsets.symmetric(vertical: 6),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      child: ListTile(
+                        leading: CircleAvatar(
+                          backgroundColor: Colors.teal.withOpacity(0.15),
+                          child: Icon(Icons.functions, color: Colors.teal),
+                        ),
+                        title: Text(cat.title, style: TextStyle(fontWeight: FontWeight.bold)),
+                        subtitle: Text(cat.subtitle, maxLines: 2, overflow: TextOverflow.ellipsis),
+                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => TopicDetailScreen(section: cat, themeColor: Colors.teal)),
+                          );
+                        },
+                      ),
+                    );
+                  },
+                ),
+              );
+            }
+          }
+
+          class StandardsScreen extends StatelessWidget {
+            @override
+            Widget build(BuildContext context) {
+              return Scaffold(
+                appBar: AppBar(title: Text('Hivatalos Szabványok és Előírások')),
+                body: ListView(
+                  padding: EdgeInsets.all(12),
+                  children: [
+                    _buildStandardCard(
+                      context,
+                      '1. Általános Biztonsági, Érintésvédelmi és Létesítési Szabványok',
+                      'MSZ HD 60364 sorozat (A kisfeszültségű berendezések alaptörvénye)',
+                      [
+                        '• MSZ HD 60364-1 (Alapelvek): Kisfeszültségű villamos berendezések alapvető elvei, jellemzői és meghatározásai.',
+                        '• MSZ HD 60364-4-41 (Biztonságvédelem): Érintésvédelem (áramütés elleni védelem) a lakossági és ipari hálózatokban.',
+                        '• MSZ HD 60364-4-42 (Hőhatások elleni védelem): Tűzvédelem és termikus hatások elleni védelem villamos berendezésekben.',
+                        '• MSZ HD 60364-4-43 (Túláramvédelem): Vezetékek és berendezések védelme túláram (zárlat és túlterhelés) ellen.',
+                        '• MSZ HD 60364-5-52 (Kábelek és vezetékek): Kisfeszültségű kábel- és vezetékrendszerek kiválasztása és szerelése.',
+                        '• MSZ HD 60364-5-54 (Földelőberendezések): Földelőberendezések, védővezetők és védő-egyenpotenciálra hozó vezetők.',
+                        '• MSZ HD 60364-6 (Ellenőrzés): Létesítés utáni első felülvizsgálat és időszakos ellenőrzés (szemrevételezés, mérés).',
+                        '• MSZ HD 60364-7-... (Különleges berendezések): Speciális helyiségek (pl. fürdőszobák, uszodák, építkezések, mezőgazdasági helyek) követelményei.',
+                      ],
+                      Colors.blueGrey,
+                    ),
+                    _buildStandardCard(
+                      context,
+                      '2. Kábelek, Vezetékek és Jelölések Szabványai',
+                      'Azonosítási és kábelszabványok',
+                      [
+                        '• MSZ EN 60446 / MSZ HD 60446: Villamos rendszerek azonosítása színekkel vagy betűjelekkel (pl. kék a nulla N, zöld-sárga a védővezető PE, fekete/barna a fázis L).',
+                        '• MSZ 2364-481: Villamos berendezések tűzvédelmi osztályozása és biztonsági követelményei.',
+                        '• MSZ EN 50525 sorozat: Kisfeszültségű energiaellátó kábelek és vezetékek.',
+                      ],
+                      Colors.teal,
+                    ),
+                    _buildStandardCard(
+                      context,
+                      '3. Érintésvédelmi és Felülvizsgálati Szabványok',
+                      'Csatlakozási, üzemeltetési és gyártási előírások',
+                      [
+                        '• MSZ 447: Kisfeszültségű közcélú elosztóhálózatra való csatlakozás.',
+                        '• MSZ 1585: Villamos berendezések üzemeltetése (VBSZ).',
+                        '• MSZ EN 61439 sorozat: Kisfeszültségű kapcsolóberendezések és vezérlőberendezések szerelvényei.',
+                      ],
+                      Colors.indigo,
+                    ),
+                    _buildStandardCard(
+                      context,
+                      '4. Villámvédelem és Túlfeszültség-védelem',
+                      'Épületek és hálózatok védelme',
+                      [
+                        '• MSZ EN 62305 sorozat: Villámvédelem (építmények villámvédelmi tervezése, kockázatértékelése).',
+                        '• MSZ EN 60364-4-443: Épületek villamos berendezéseinek védelme a légköri eredetű túlfeszültségektől (SPD-k).',
+                      ],
+                      Colors.deepOrange,
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            Widget _buildStandardCard(BuildContext context, String title, String subtitle, List<String> items, Color color) {
+              return Card(
+                elevation: 2,
+                margin: EdgeInsets.symmetric(vertical: 8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                child: Padding(
+                  padding: EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.bookmark, color: color),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: color)),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 4),
+                      Text(subtitle, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.grey[700])),
+                      Divider(height: 20),
+                      ...items.map((item) => Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4),
+                        child: Text(item, style: TextStyle(fontSize: 14, height: 1.3)),
+                      )).toList(),
+                    ],
+                  ),
+                ),
+              );
+            }
+          }
+
           class SchematicsScreen extends StatelessWidget {
             final List<Map<String, String>> schematics = [
               {'title': 'Kapcsolófajták', 'path': 'assets/images/kapcsolofajtak.jpg'},
@@ -296,7 +563,63 @@ jobs:
             }
           }
 
-          // --- TELJES KÉPERNYŐS KÉPNAGYÍTÓ NÉZET ---
+          class TopicDetailScreen extends StatelessWidget {
+            final TopicSection section;
+            final Color themeColor;
+
+            TopicDetailScreen({required this.section, required this.themeColor});
+
+            @override
+            Widget build(BuildContext context) {
+              return Scaffold(
+                appBar: AppBar(title: Text(section.title)),
+                body: SingleChildScrollView(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: themeColor.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: themeColor.withOpacity(0.3)),
+                        ),
+                        child: Text(
+                          section.subtitle,
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.black87),
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      ...section.bulletPoints.map((point) => Card(
+                        elevation: 1,
+                        margin: EdgeInsets.symmetric(vertical: 6),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                        child: Padding(
+                          padding: EdgeInsets.all(14.0),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(Icons.bolt, color: themeColor, size: 22),
+                              SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  point,
+                                  style: TextStyle(fontSize: 15, height: 1.4),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )).toList(),
+                    ],
+                  ),
+                ),
+              );
+            }
+          }
+
           class ImageViewerScreen extends StatelessWidget {
             final String title;
             final String imagePath;
@@ -325,102 +648,9 @@ jobs:
             }
           }
 
-          class TopicSection {
-            final String title;
-            final String subtitle;
-            final List<String> bulletPoints;
-
-            TopicSection(this.title, this.subtitle, this.bulletPoints);
-          }
-
-          // (A többi képernyő: TheoryMenuScreen, FormulasMenuScreen, CalculatorsScreen, StandardsScreen, stb. változatlanul megmarad)
-          class TheoryMenuScreen extends StatelessWidget {
-            final List<TopicSection> chapters = [
-              TopicSection(
-                '1. Lakossági Fizikai Alapok és Számítások',
-                'A kisfeszültségű lakossági hálózatok tervezése és megértése a klasszikus elektrotechnikai törvényeken alapul.',
-                [
-                  'Ohm-törvény: Az áramkörben folyó áramerősség (I) egyenesen arányos a feszültséggel (U) és fordítottan arányos az ellenállással (R). Képlet: I = U / R.',
-                  'Egyfázisú lakossági hálózat (230 V): Hatásos teljesítmény: P = U * I * cos(φ). Tiszta ohmos terhelésnél: P = U * I.',
-                  'Védelmi Eszközök: Kismegszakítók (MCB) B karakterisztikával háztartásban.',
-                  'Áram-védőkapcsoló (FI-relé / RCD): max 30 mA érzékenység kötelező dugaszolóaljzatokhoz.',
-                ],
-              ),
-              TopicSection(
-                '1. Ipari Fizikai Alapok és Számítások',
-                'Nagyobb teljesítményű ipari rendszerek és háromfázisú hálózatok méretezése.',
-                [
-                  'Háromfázisú ipari hálózat (400 V): P = √3 * U_vonali * I_fázis * cos(φ).',
-                  'Kismegszakítók ipari motoroknál C vagy D karakterisztikával.',
-                  'Feszültségesés számítás: ΔU = (√3 * L * I * ρ * cos(φ)) / S.',
-                ],
-              ),
-              TopicSection(
-                '2. Érintésvédelmi Rendszerek',
-                'TN-C, TN-S, TN-C-S, TT, IT rendszerek áttekintése.',
-                [
-                  'TN-C-S: A legelterjedtebb magyarországi lakossági és ipari betáplálás.',
-                  'TT: Kerti épületek, tanyák, független helyi földelővel.',
-                ],
-              ),
-            ];
-
-            @override
-            Widget build(BuildContext context) {
-              return Scaffold(
-                appBar: AppBar(title: Text('Kisfeszültség (LV) Rendszerek')),
-                body: ListView.builder(
-                  padding: EdgeInsets.all(12),
-                  itemCount: chapters.length,
-                  itemBuilder: (context, index) {
-                    final ch = chapters[index];
-                    return Card(
-                      elevation: 2,
-                      margin: EdgeInsets.symmetric(vertical: 6),
-                      child: ListTile(
-                        leading: CircleAvatar(backgroundColor: Colors.blue.withOpacity(0.15), child: Text('${index + 1}.')),
-                        title: Text(ch.title, style: TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text(ch.subtitle, maxLines: 2, overflow: TextOverflow.ellipsis),
-                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => TopicDetailScreen(section: ch, themeColor: Colors.blue)));
-                        },
-                      ),
-                    );
-                  },
-                ),
-              );
-            }
-          }
-
-          class FormulasMenuScreen extends StatelessWidget {
-            @override
-            Widget build(BuildContext context) {
-              return Scaffold(
-                appBar: AppBar(title: Text('Szakmai Képletgyűjtemény')),
-                body: Center(child: Text('Képletek modul aktív', style: TextStyle(fontSize: 16))),
-              );
-            }
-          }
-
           class CalculatorsScreen extends StatelessWidget {
             @override
-            Widget build(BuildContext context) {
-              return Scaffold(
-                appBar: AppBar(title: Text('Kalkulátorok')),
-                body: Center(child: Text('Kalkulátorok modul aktív', style: TextStyle(fontSize: 16))),
-              );
-            }
-          }
-
-          class StandardsScreen extends StatelessWidget {
-            @override
-            Widget build(BuildContext context) {
-              return Scaffold(
-                appBar: AppBar(title: Text('Szabványok')),
-                body: Center(child: Text('Szabványok modul aktív', style: TextStyle(fontSize: 16))),
-              );
-            }
+            Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text('Kalkulátorok')), body: Center(child: Text('Kalkulátorok aktív')));
           }
 
           class LockedScreen extends StatelessWidget {
@@ -436,32 +666,16 @@ jobs:
             @override
             Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text(title)), body: Center(child: Text('Fejlesztői Mód Tartalom')));
           }
-          
-          class TopicDetailScreen extends StatelessWidget {
-            final TopicSection section;
-            final Color themeColor;
-            TopicDetailScreen({required this.section, required this.themeColor});
-            @override
-            Widget build(BuildContext context) {
-              return Scaffold(
-                appBar: AppBar(title: Text(section.title)),
-                body: ListView(
-                  padding: EdgeInsets.all(16),
-                  children: section.bulletPoints.map((p) => Card(margin: EdgeInsets.symmetric(vertical: 6), child: Padding(padding: EdgeInsets.all(14), child: Text(p, style: TextStyle(fontSize: 15))))).toList(),
-                ),
-              );
-            }
-          }
           EOF
 
           flutter pub get
           flutter build apk --release
           
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/Elektrik-Home-v1.0.2-$TIMESTAMP.apk
+          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/Elektrik-Home-v1.0.3-$TIMESTAMP.apk
 
       - name: Kész APK feltoltese
         uses: actions/upload-artifact@v4
         with:
-          name: Elektrik-Home-v1.0.2-Kepekkel
-          path: build/app/outputs/flutter-apk/Elektrik-Home-v1.0.2-*.apk
+          name: Elektrik-Home-v1.0.3-MindenJó
+          path: build/app/outputs/flutter-apk/Elektrik-Home-v1.0.3-*.apk
