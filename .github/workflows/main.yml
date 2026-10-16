@@ -24,12 +24,10 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
 
-      - name: Kod frissitese es Build
+      - name: Kod letrehozasa es Build
         run: |
-          # Biztositjuk, hogy a lib mappa tuti létezzen
           mkdir -p lib
           
-          # Indul a vegleges main.dart közvetlen irasa (nincs create parancs, ami torolne!)
           cat << 'EOF' > lib/main.dart
           import 'package:flutter/material.dart';
           import 'dart:math';
@@ -421,6 +419,14 @@ jobs:
             }
           }
 
+          class TopicSection {
+            final String title;
+            final String subtitle;
+            final List<String> bulletPoints;
+
+            TopicSection(this.title, this.subtitle, this.bulletPoints);
+          }
+
           class TopicDetailScreen extends StatelessWidget {
             final TopicSection section;
             final Color themeColor;
@@ -646,23 +652,6 @@ jobs:
           class PlaceholderScreen extends StatelessWidget {
             final String title;
             PlaceholderScreen({required this.title});
-
-            @override
-            Widget_build(BuildContext context) {
-              return Scaffold(
-                appBar: AppBar(title: Text(title)),
-                body: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Center(
-                    child: Text(
-                      'A(z) "$title" modul tartalma sikeresen betöltve (Fejlesztői Mód aktív).',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 17, color: Colors.grey[700]),
-                    ),
-                  ),
-                ),
-              );
-            }
 
             @override
             Widget build(BuildContext context) {
