@@ -1,0 +1,41 @@
+name: Android APK Keszites
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fajlok letoltese
+        uses: actions/checkout@v4
+
+      - name: Java beallitasa
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Flutter telepitese
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          channel: 'stable'
+
+      - name: Android keret felepitese es APK gyartas
+        run: |
+          cp lib/main.dart main.dart.bak
+          cp pubspec.yaml pubspec.yaml.bak
+          flutter create . --project-name elektrik_home --org hu.elektrikhome
+          mv main.dart.bak lib/main.dart
+          mv pubspec.yaml.bak pubspec.yaml
+          flutter pub get
+          flutter build apk --release
+
+      - name: Kesz APK feltoltese
+        uses: actions/upload-artifact@v4
+        with:
+          name: Elektrik-Home-Telepito
+          path: build/app/outputs/flutter-apk/app-release.apk
