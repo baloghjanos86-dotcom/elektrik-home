@@ -24,10 +24,12 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
 
-      - name: Kod letrehozasa es Build
+      - name: Projekt generalas es Kod beillesztes
         run: |
-          mkdir -p lib
+          # 1. Hivatalos, tamogatott Flutter projekt generalasa (ez letrehozza a Gradle szerkezetet is)
+          flutter create . --project-name elektrik_home --org hu.elektrikhome
           
+          # 2. A sajat, kesz main.dart felulirasa a pontos szabvanyokkal
           cat << 'EOF' > lib/main.dart
           import 'package:flutter/material.dart';
           import 'dart:math';
