@@ -32,7 +32,6 @@ jobs:
           # 2. A teljes, hibamentes villanyszerelo kod letrehozasa közvetlenül a szerveren
           cat << 'EOF' > lib/main.dart
           import 'package:flutter/material.dart';
-          import 'math_helper.dart' if (dart.library.html) 'math_helper.dart';
           import 'dart:math';
 
           void main() => runApp(VillanyszereloApp());
