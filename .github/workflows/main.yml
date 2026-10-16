@@ -32,6 +32,9 @@ jobs:
           import 'package:flutter/material.dart';
           import 'dart:math';
 
+          // Globális fejlesztői kapcsoló (True = Minden prémium elérhető teszteléshez)
+          bool isDeveloperMode = true; 
+
           void main() => runApp(VillanyszereloApp());
 
           class VillanyszereloApp extends StatelessWidget {
@@ -54,7 +57,12 @@ jobs:
             }
           }
 
-          class MainMenuScreen extends StatelessWidget {
+          class MainMenuScreen extends StatefulWidget {
+            @override
+            _MainMenuScreenState createState() => _MainMenuScreenState();
+          }
+
+          class _MainMenuScreenState extends State<MainMenuScreen> {
             @override
             Widget build(BuildContext context) {
               final List<MenuItemData> menuItems = [
@@ -81,17 +89,17 @@ jobs:
                 ),
                 MenuItemData(
                   '4. Középfeszültség (MV) [PRÉMIUM]',
-                  'Transzformátorállomások, cellák, zárlati áramok',
+                  isDeveloperMode ? 'Transzformátorállomások (Fejlesztői Mód aktív)' : 'Transzformátorállomások, cellák, zárlati áramok',
                   Icons.electric_bolt,
                   Colors.deepOrange,
-                  LockedScreen(title: 'Középfeszültség (MV) Rendszerek'),
+                  isDeveloperMode ? PlaceholderScreen(title: 'Középfeszültség (MV) Rendszerek [Fejlesztői Mód]') : LockedScreen(title: 'Középfeszültség (MV) Rendszerek'),
                 ),
                 MenuItemData(
                   '5. Magasfeszültség (HV) [PRÉMIUM]',
-                  'Távvezetékek, szabadvezetékek, FAM alapok',
+                  isDeveloperMode ? 'Távvezetékek (Fejlesztői Mód aktív)' : 'Távvezetékek, szabadvezetékek, FAM alapok',
                   Icons.electrical_services,
                   Colors.red,
-                  LockedScreen(title: 'Magasfeszültség (HV) & Távvezetékek'),
+                  isDeveloperMode ? PlaceholderScreen(title: 'Magasfeszültség (HV) & Távvezetékek [Fejlesztői Mód]') : LockedScreen(title: 'Magasfeszültség (HV) & Távvezetékek'),
                 ),
                 MenuItemData(
                   '6. Kapcsolási Rajzok & Szabványok',
@@ -106,6 +114,23 @@ jobs:
                 appBar: AppBar(
                   title: Text('Elektrik-Home Pro Expert', style: TextStyle(fontWeight: FontWeight.bold)),
                   centerTitle: true,
+                  actions: [
+                    IconButton(
+                      icon: Icon(isDeveloperMode ? Icons.developer_mode : Icons.lock_open),
+                      tooltip: 'Fejlesztői Mód Váltása',
+                      onPressed: () {
+                        setState(() {
+                          isDeveloperMode = !isDeveloperMode;
+                        });
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(isDeveloperMode ? '🔧 Fejlesztői Mód BEKAPCSOLVA (Prémium elérhető)' : '🔒 Fejlesztői Mód KIKAPCSOLVA (Prémium zárolva)'),
+                            duration: Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
                 body: Padding(
                   padding: EdgeInsets.all(12.0),
@@ -503,7 +528,7 @@ jobs:
                         ElevatedButton.icon(
                           style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700], foregroundColor: Colors.white, minimumSize: Size(double.infinity, 50)),
                           icon: Icon(Icons.star),
-                          label: Text('Prémium Hozzáférés Feloldása', style: TextStyle(fontSize: 16)),
+                          label: Text('Prémium Előfizetés Igénylése', style: TextStyle(fontSize: 16)),
                           onPressed: () {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text('Google Play Billing integráció hamarosan érkezik!')),
@@ -530,7 +555,7 @@ jobs:
                   padding: EdgeInsets.all(16.0),
                   child: Center(
                     child: Text(
-                      'A(z) "$title" modul hamarosan feltöltésre kerül a részletes anyagokkal!',
+                      'A(z) "$title" modul tartalma sikeresen betöltve (Fejlesztői Mód aktív).',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 17, color: Colors.grey[700]),
                     ),
