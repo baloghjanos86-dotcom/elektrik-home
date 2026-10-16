@@ -24,15 +24,16 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
 
-      - name: Elektrik-Home App Build
+      - name: Kod frissitese es Build
         run: |
-          flutter create . --project-name elektrik_home --org hu.elektrikhome
+          # Biztositjuk, hogy a lib mappa tuti létezzen
+          mkdir -p lib
           
+          # Indul a vegleges main.dart közvetlen irasa (nincs create parancs, ami torolne!)
           cat << 'EOF' > lib/main.dart
           import 'package:flutter/material.dart';
           import 'dart:math';
 
-          // Globális fejlesztői kapcsoló (True = Minden prémium elérhető teszteléshez)
           bool isDeveloperMode = true; 
 
           void main() => runApp(VillanyszereloApp());
@@ -41,7 +42,7 @@ jobs:
             @override
             Widget build(BuildContext context) {
               return MaterialApp(
-                title: 'Elektrik-Home Pro',
+                title: 'Elektrik-Home Pro v1.0.1',
                 debugShowCheckedModeBanner: false,
                 theme: ThemeData(
                   primarySwatch: Colors.amber,
@@ -88,21 +89,28 @@ jobs:
                   CalculatorsScreen(),
                 ),
                 MenuItemData(
-                  '4. Középfeszültség (MV) [PRÉMIUM]',
+                  '4. Hivatalos Szabványok (MSZ / EN)',
+                  'Részletes szabványtáblázatok és előírások',
+                  Icons.menu_book,
+                  Colors.brown,
+                  StandardsScreen(),
+                ),
+                MenuItemData(
+                  '5. Középfeszültség (MV) [PRÉMIUM]',
                   isDeveloperMode ? 'Transzformátorállomások (Fejlesztői Mód aktív)' : 'Transzformátorállomások, cellák, zárlati áramok',
                   Icons.electric_bolt,
                   Colors.deepOrange,
                   isDeveloperMode ? PlaceholderScreen(title: 'Középfeszültség (MV) Rendszerek [Fejlesztői Mód]') : LockedScreen(title: 'Középfeszültség (MV) Rendszerek'),
                 ),
                 MenuItemData(
-                  '5. Magasfeszültség (HV) [PRÉMIUM]',
+                  '6. Magasfeszültség (HV) [PRÉMIUM]',
                   isDeveloperMode ? 'Távvezetékek (Fejlesztői Mód aktív)' : 'Távvezetékek, szabadvezetékek, FAM alapok',
                   Icons.electrical_services,
                   Colors.red,
                   isDeveloperMode ? PlaceholderScreen(title: 'Magasfeszültség (HV) & Távvezetékek [Fejlesztői Mód]') : LockedScreen(title: 'Magasfeszültség (HV) & Távvezetékek'),
                 ),
                 MenuItemData(
-                  '6. Kapcsolási Rajzok & Szabványok',
+                  '7. Kapcsolási Rajzok & Szabványok',
                   'Váltó, csillár kapcsolók, színkódok',
                   Icons.lightbulb,
                   Colors.green,
@@ -112,8 +120,14 @@ jobs:
 
               return Scaffold(
                 appBar: AppBar(
-                  title: Text('Elektrik-Home Pro Expert', style: TextStyle(fontWeight: FontWeight.bold)),
+                  title: Column(
+                    children: [
+                      Text('Elektrik-Home Pro', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                      Text('Verzió: v1.0.1 (Szabványokkal)', style: TextStyle(fontSize: 12, color: Colors.black54)),
+                    ],
+                  ),
                   centerTitle: true,
+                  toolbarHeight: 60,
                   actions: [
                     IconButton(
                       icon: Icon(isDeveloperMode ? Icons.developer_mode : Icons.lock_open),
@@ -124,7 +138,7 @@ jobs:
                         });
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(isDeveloperMode ? '🔧 Fejlesztői Mód BEKAPCSOLVA (Prémium elérhető)' : '🔒 Fejlesztői Mód KIKAPCSOLVA (Prémium zárolva)'),
+                            content: Text(isDeveloperMode ? '🔧 Fejlesztői Mód BEKAPCSOLVA' : '🔒 Fejlesztői Mód KIKAPCSOLVA'),
                             duration: Duration(seconds: 2),
                           ),
                         );
@@ -180,12 +194,98 @@ jobs:
             MenuItemData(this.title, this.subtitle, this.icon, this.color, this.targetScreen);
           }
 
-          class TopicSection {
-            final String title;
-            final String subtitle;
-            final List<String> bulletPoints;
+          class StandardsScreen extends StatelessWidget {
+            @override
+            Widget build(BuildContext context) {
+              return Scaffold(
+                appBar: AppBar(title: Text('Hivatalos Szabványok és Előírások')),
+                body: ListView(
+                  padding: EdgeInsets.all(12),
+                  children: [
+                    _buildStandardCard(
+                      context,
+                      '1. Általános Biztonsági, Érintésvédelmi és Létesítési Szabványok',
+                      'MSZ HD 60364 sorozat (A kisfeszültségű berendezések alaptörvénye)',
+                      [
+                        '• MSZ HD 60364-1 (Alapelvek): Kisfeszültségű villamos berendezések alapvető elvei, jellemzői és meghatározásai.',
+                        '• MSZ HD 60364-4-41 (Biztonságvédelem): Érintésvédelem (áramütés elleni védelem) a lakossági és ipari hálózatokban.',
+                        '• MSZ HD 60364-4-42 (Hőhatások elleni védelem): Tűzvédelem és termikus hatások elleni védelem villamos berendezésekben.',
+                        '• MSZ HD 60364-4-43 (Túláramvédelem): Vezetékek és berendezések védelme túláram (zárlat és túlterhelés) ellen.',
+                        '• MSZ HD 60364-5-52 (Kábelek és vezetékek): Kisfeszültségű kábel- és vezetékrendszerek kiválasztása és szerelése.',
+                        '• MSZ HD 60364-5-54 (Földelőberendezések): Földelőberendezések, védővezetők és védő-egyenpotenciálra hozó vezetők.',
+                        '• MSZ HD 60364-6 (Ellenőrzés): Létesítés utáni első felülvizsgálat és időszakos ellenőrzés (szemrevételezés, mérés).',
+                        '• MSZ HD 60364-7-... (Különleges berendezések): Speciális helyiségek (pl. fürdőszobák, uszodák, építkezések, mezőgazdasági helyek) követelményei.',
+                      ],
+                      Colors.blueGrey,
+                    ),
+                    _buildStandardCard(
+                      context,
+                      '2. Kábelek, Vezetékek és Jelölések Szabványai',
+                      'Azonosítási és kábelszabványok',
+                      [
+                        '• MSZ EN 60446 / MSZ HD 60446: Villamos rendszerek azonosítása színekkel vagy betűjelekkel (pl. kék a nulla N, zöld-sárga a védővezető PE, fekete/barna a fázis L).',
+                        '• MSZ 2364-481: Villamos berendezések tűzvédelmi osztályozása és biztonsági követelményei (részben átfedésben a HD 60364-gyel).',
+                        '• MSZ EN 50525 sorozat: Kisfeszültségű energiaellátó kábelek és vezetékek (pl. a hagyományos MFT / H07RN-F / H07V-U típusú vezetékek követelményei).',
+                      ],
+                      Colors.teal,
+                    ),
+                    _buildStandardCard(
+                      context,
+                      '3. Érintésvédelmi és Felülvizsgálati Szabványok',
+                      'Csatlakozási, üzemeltetési és gyártási előírások',
+                      [
+                        '• MSZ 447: Kisfeszültségű közcélú elosztóhálózatra való csatlakozás (pl. házi csatlakozások, mérőhelyek kialakítási szabályai az áramszolgáltatói elosztói engedélyesek hálózatán).',
+                        '• MSZ 1585: Villamos berendezések üzemeltetése (a korábbi MSZ 172 helyettesítője a munkavédelemben, azaz a "Villamos Biztonsági Szabályzat" – VBSZ).',
+                        '• MSZ EN 61439 sorozat: Kisfeszültségű kapcsolóberendezések és vezérlőberendezések szerelvényei (főelosztók, lakáselosztók gyártási és vizsgálati szabványa).',
+                      ],
+                      Colors.indigo,
+                    ),
+                    _buildStandardCard(
+                      context,
+                      '4. Villámvédelem és Túlfeszültség-védelem',
+                      'Épületek és hálózatok védelme',
+                      [
+                        '• MSZ EN 62305 sorozat: Villámvédelem (építmények villámvédelmi tervezése, kockázatértékelése, fizikai károk és életvédelem, villamos rendszerek védelme).',
+                        '• MSZ EN 60364-4-443: Épületek villamos berendezéseinek védelme a légköri eredetű túlfeszültségektől (túlfeszültség-levezetők, SPD-k alkalmazása).',
+                      ],
+                      Colors.deepOrange,
+                    ),
+                  ],
+                ),
+              );
+            }
 
-            TopicSection(this.title, this.subtitle, this.bulletPoints);
+            Widget _buildStandardCard(BuildContext context, String title, String subtitle, List<String> items, Color color) {
+              return Card(
+                elevation: 2,
+                margin: EdgeInsets.symmetric(vertical: 8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                child: Padding(
+                  padding: EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.bookmark, color: color),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: color)),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 4),
+                      Text(subtitle, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.grey[700])),
+                      Divider(height: 20),
+                      ...items.map((item) => Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4),
+                        child: Text(item, style: TextStyle(fontSize: 14, height: 1.3)),
+                      )).toList(),
+                    ],
+                  ),
+                ),
+              );
+            }
           }
 
           class TheoryMenuScreen extends StatelessWidget {
@@ -548,6 +648,23 @@ jobs:
             PlaceholderScreen({required this.title});
 
             @override
+            Widget_build(BuildContext context) {
+              return Scaffold(
+                appBar: AppBar(title: Text(title)),
+                body: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Center(
+                    child: Text(
+                      'A(z) "$title" modul tartalma sikeresen betöltve (Fejlesztői Mód aktív).',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 17, color: Colors.grey[700]),
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            @override
             Widget build(BuildContext context) {
               return Scaffold(
                 appBar: AppBar(title: Text(title)),
@@ -568,9 +685,12 @@ jobs:
 
           flutter pub get
           flutter build apk --release
+          
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/Elektrik-Home-v1.0.1-$TIMESTAMP.apk
 
       - name: Kész APK feltoltese
         uses: actions/upload-artifact@v4
         with:
-          name: Elektrik-Home-Telepito
-          path: build/app/outputs/flutter-apk/app-release.apk
+          name: Elektrik-Home-v1.0.1-Frissitett
+          path: build/app/outputs/flutter-apk/Elektrik-Home-v1.0.1-*.apk
