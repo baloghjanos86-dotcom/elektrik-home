@@ -24,9 +24,12 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
 
-      - name: Elektrik-Home App Build es Egyedi Atnevezes
+      - name: Elektrik-Home App Build es Verziozsamszamolas
         run: |
           flutter create . --project-name elektrik_home --org hu.elektrikhome
+          
+          # Automatikus verziószám beállítása 1.0.1-re a pubspec.yaml-ban
+          sed -i 's/version: 1.0.0+1/version: 1.0.1+2/g' pubspec.yaml
           
           cat << 'EOF' > lib/main.dart
           import 'package:flutter/material.dart';
@@ -40,7 +43,7 @@ jobs:
             @override
             Widget build(BuildContext context) {
               return MaterialApp(
-                title: 'Elektrik-Home Pro',
+                title: 'Elektrik-Home Pro v1.0.1',
                 debugShowCheckedModeBanner: false,
                 theme: ThemeData(
                   primarySwatch: Colors.amber,
@@ -118,7 +121,7 @@ jobs:
 
               return Scaffold(
                 appBar: AppBar(
-                  title: Text('Elektrik-Home Pro Expert', style: TextStyle(fontWeight: FontWeight.bold)),
+                  title: Text('Elektrik-Home Pro v1.0.1', style: TextStyle(fontWeight: FontWeight.bold)),
                   centerTitle: true,
                   actions: [
                     IconButton(
@@ -184,14 +187,6 @@ jobs:
             final Widget targetScreen;
 
             MenuItemData(this.title, this.subtitle, this.icon, this.color, this.targetScreen);
-          }
-
-          class TopicSection {
-            final String title;
-            final String subtitle;
-            final List<String> bulletPoints;
-
-            TopicSection(this.title, this.subtitle, this.bulletPoints);
           }
 
           class StandardsScreen extends StatelessWidget {
@@ -669,12 +664,11 @@ jobs:
           flutter pub get
           flutter build apk --release
           
-          # Egyedi nev letrehozas idoponttal, hogy a bongeszo es a telefon ne a regit adja be
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/Elektrik-Home-$TIMESTAMP.apk
+          cp build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/Elektrik-Home-v1.0.1-$TIMESTAMP.apk
 
       - name: Kész APK feltoltese
         uses: actions/upload-artifact@v4
         with:
-          name: Elektrik-Home-Telepito
-          path: build/app/outputs/flutter-apk/Elektrik-Home-*.apk
+          name: Elektrik-Home-v1.0.1-Telepito
+          path: build/app/outputs/flutter-apk/Elektrik-Home-v1.0.1-*.apk
