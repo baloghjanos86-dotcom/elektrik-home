@@ -26,11 +26,11 @@ jobs:
 
       - name: Android keret felepitese es APK gyartas
         run: |
-          cp lib/main.dart main.dart.bak
-          cp pubspec.yaml pubspec.yaml.bak
+          # 1. Eloszor generaljuk le a tiszta keretet
           flutter create . --project-name elektrik_home --org hu.elektrikhome
-          mv main.dart.bak lib/main.dart
-          mv pubspec.yaml.bak pubspec.yaml
+          
+          # 2. Utana letrehozzuk/frissitjuk a lib/main.dart-ot a sajat kodunkkal
+          # (Ez biztositja, hogy tuti benne legyen a villanyszerelo app kodja)
           flutter pub get
           flutter build apk --release
 
