@@ -24,12 +24,10 @@ jobs:
           flutter-version: '3.24.0'
           channel: 'stable'
 
-      - name: Elektrik-Home App Kod Letrehozasa es Build
+      - name: Elektrik-Home App Build
         run: |
-          # 1. Tiszta keret generalasa
           flutter create . --project-name elektrik_home --org hu.elektrikhome
           
-          # 2. A teljes, hibamentes villanyszerelo kod letrehozasa közvetlenül a szerveren
           cat << 'EOF' > lib/main.dart
           import 'package:flutter/material.dart';
           import 'dart:math';
@@ -61,52 +59,52 @@ jobs:
             Widget build(BuildContext context) {
               final List<MenuItemData> menuItems = [
                 MenuItemData(
-                  'Elméleti Alapok (1-6. fejezet)',
-                  'Töltés, áram, Ohm és Kirchhoff törvényei, AC/DC',
-                  Icons.menu_book,
-                  Colors.indigo,
+                  '1. Kisfeszültség (LV) - Lakossági & Ipari',
+                  'Ohm-törvény, feszültségesés, lakossági hálózatok',
+                  Icons.home,
+                  Colors.blue,
                   TheoryMenuScreen(),
                 ),
                 MenuItemData(
-                  'Villanyszerelő Képletgyűjtemény',
+                  '2. Villanyszerelő Képletgyűjtemény',
                   'Minden fontos szakmai és méretezési képlet',
                   Icons.functions,
                   Colors.teal,
                   FormulasMenuScreen(),
                 ),
                 MenuItemData(
-                  'Számológépek és Kalkulátorok',
+                  '3. Interaktív Kalkulátorok',
                   'Áramerősség, keresztmetszet és feszültségesés',
                   Icons.calculate,
-                  Colors.blue,
+                  Colors.indigo,
                   CalculatorsScreen(),
                 ),
                 MenuItemData(
-                  'Kapcsolási Rajzok',
-                  'Egypólusú, váltó, csillár kapcsolók',
+                  '4. Középfeszültség (MV) [PRÉMIUM]',
+                  'Transzformátorállomások, cellák, zárlati áramok',
+                  Icons.electric_bolt,
+                  Colors.deepOrange,
+                  LockedScreen(title: 'Középfeszültség (MV) Rendszerek'),
+                ),
+                MenuItemData(
+                  '5. Magasfeszültség (HV) [PRÉMIUM]',
+                  'Távvezetékek, szabadvezetékek, FAM alapok',
                   Icons.electrical_services,
-                  Colors.orange,
-                  PlaceholderScreen(title: 'Kapcsolási Rajzok'),
-                ),
-                MenuItemData(
-                  'Színkódok és Szabványok',
-                  'Fázis, nulla, védővezető jelölések',
-                  Icons.color_lens,
-                  Colors.green,
-                  PlaceholderScreen(title: 'Színkódok és Szabványok'),
-                ),
-                MenuItemData(
-                  'Prémium Tartalom (Zárolt)',
-                  'Exkluzív ipari projektek és méretezések',
-                  Icons.lock,
                   Colors.red,
-                  PlaceholderScreen(title: 'Prémium Tartalom'),
+                  LockedScreen(title: 'Magasfeszültség (HV) & Távvezetékek'),
+                ),
+                MenuItemData(
+                  '6. Kapcsolási Rajzok & Szabványok',
+                  'Váltó, csillár kapcsolók, színkódok',
+                  Icons.lightbulb,
+                  Colors.green,
+                  PlaceholderScreen(title: 'Kapcsolási Rajzok és Szabványok'),
                 ),
               ];
 
               return Scaffold(
                 appBar: AppBar(
-                  title: Text('Elektrik-Home Szakmai Segédlet', style: TextStyle(fontWeight: FontWeight.bold)),
+                  title: Text('Elektrik-Home Pro Expert', style: TextStyle(fontWeight: FontWeight.bold)),
                   centerTitle: true,
                 ),
                 body: Padding(
@@ -168,56 +166,30 @@ jobs:
           class TheoryMenuScreen extends StatelessWidget {
             final List<TopicSection> chapters = [
               TopicSection(
-                '1. fejezet: Alapfogalmak és az elektromos töltés',
-                'Minden elektromos jelenség alapja a töltés, amely az anyag egy alapvető tulajdonsága.',
+                '1. Kisfeszültségű (LV) Alapok és Töltések',
+                '0.4 kV alatti hálózatok és alapvető fizikai törvényszerűségek.',
                 [
-                  'Elektromos töltés (Q): Jele Q, mértékegysége a Coulomb (C). Az elektronok negatív, a protonok pozitív töltésűek.',
-                  'Elemi töltés: Egyetlen elektron töltése (e ≈ -1,6 · 10⁻¹⁹ C).',
-                  'Coulomb-törvény: Két pontszerű töltés között ható erő egyenesen arányos a töltések nagyságával, és fordítottan arányos a köztük lévő távolság négyzetével.',
-                  'Elektromos tér: A töltések maguk körül elektromos mezőt hoznak létre, amely erőt fejt ki a többi töltésre.',
+                  'Feszültségszintek: Kisfeszültség 1000 V AC-ig / 1500 V DC-ig terjed.',
+                  'Elektromos töltés (Q) és áram (I): I = Q / t, mértékegysége Amper (A).',
+                  'Ohm törvénye a gyakorlatban: U = I · R, védelem szempontjából kritikus értékek.',
+                  'Kirchhoff törvények: Csomóponti és huroktörvény az elosztótáblák hibakereséséhez.',
                 ],
               ),
               TopicSection(
-                '2. fejezet: Elektromos áram, feszültség és ellenállás',
-                'Ez a három alapvető mennyiség határozza meg a villamos áramkörök működését.',
+                '2. Kisfeszültségű Elosztók és Védelmek',
+                'Lakossági és kereskedelmi épületek elosztószekrényei.',
                 [
-                  'Elektromos áram (I): A töltéshordozók egyirányú, rendezett mozgása.\\n• Képlete: I = Q / t\\n• Mértékegysége: Amper (A)',
-                  'Elektromos feszültség (U): Két pont közötti potenciálkülönbség, amely az elektronokat mozgásra kényszeríti.\\n• Mértékegysége: Volt (V)',
-                  'Elektromos ellenállás (R): Az anyagok azon tulajdonsága, amellyel akadályozzák az áram folyását.\\n• Képlete: R = ρ · (l / A)\\n• Mértékegysége: Ohm (Ω)',
+                  'Kismegszakítók karakterisztikái: B (lakossági konnektorok, világítás), C (motorok, induktív terhelések), D (nagy indítóáramú transzformátorok).',
+                  'Áram-védőkapcsoló (FI-relé / RCD): Érintésvédelem, lakossági szabvány szerint max 30 mA érzékenység.',
+                  'Túlfeszültség-védelem (SPD): T1, T2, T3 fokozatok a villámvédelem és kapcsolási túlfeszültségek ellen.',
                 ],
               ),
               TopicSection(
-                '3. fejezet: Alaptörvények az áramkörökben',
-                'Az áramkörök méretezéséhez és megértéséhez szükséges legfontosabb szabályok.',
+                '3. Vezeték- és Keresztmetszet-számítás LV-ben',
+                'Hőmérsékleti tényezők, egyidejűség és feszültségesés.',
                 [
-                  'Ohm törvénye: Egy vezető szakaszán átfolyó áram erőssége egyenesen arányos a feszültséggel, és fordítottan az ellenállással.\\n• Képlete: I = U / R vagy U = I · R',
-                  'Kirchhoff I. törvénye (Csomóponti törvény): Egy csomópontba befolyó áramok összege megegyezik az onnan kifolyó áramok összegével.',
-                  'Kirchhoff II. törvénye (Huroktörvény): Bármely zárt áramköri hurokban a feszültségek előjeles összege nulla.',
-                ],
-              ),
-              TopicSection(
-                '4. fejezet: Ellenállások kapcsolása',
-                'Az alkatrészeket két alapvető módon kombinálhatjuk:',
-                [
-                  'SOROS KAPCSOLÁS:\\n• Áram: Minden ellenálláson ugyanaz az áram folyik (I_össz = I₁ = I₂).\\n• Feszültség: A feszültségek összeadódnak.\\n• Eredő: R_eredő = R₁ + R₂ + ...',
-                  'PÁRHUZAMOS KAPCSOLÁS:\\n• Áram: A részáramok összege adja a főág áramát.\\n• Feszültség: Minden ellenálláson ugyanakkora.\\n• Eredő: 1 / R_eredő = (1 / R₁) + (1 / R₂) + ...',
-                ],
-              ),
-              TopicSection(
-                '5. fejezet: Elektromos munka és teljesítmény',
-                'Az elektromos áram energiát szállít a munkavégzéshez.',
-                [
-                  'Elektromos teljesítmény (P): Az egységnyi idő alatt végzett munka.\\n• Képlete: P = U · I\\n• Mértékegysége: Watt (W)',
-                  'Elektromos munka (W): A teljesítmény és az idő szorzata.\\n• Képlete: W = P · t\\n• Mértékegysége: Joule (J) vagy Kilowatthóra (kWh).',
-                ],
-              ),
-              TopicSection(
-                '6. fejezet: Egyenáram (DC) vs. Váltakozó áram (AC)',
-                'Az áram két fő típusa a gyakorlatban:',
-                [
-                  'Egyenáram (DC): Az áram és feszültség értéke az időben állandó (pl. akkumulátorok).',
-                  'Váltakozó áram (AC): Az áram iránya és nagysága periodikusan változik (pl. konnektor).',
-                  'Frekvencia (f): Európában 50 Hz (másodpercenként 50-szer vált irányt).',
+                  'Megengedett tartós áram: Függ a fektetési módtól (falban, csőben, tálcán) és a szigetelés anyagától (PVC vs. XLPE).',
+                  'Feszültségesési határok: Világításnál max. 1-3%, egyéb fogyasztóknál max. 3-5% a fogyasztói berendezés végpontjáig.',
                 ],
               ),
             ];
@@ -225,7 +197,7 @@ jobs:
             @override
             Widget build(BuildContext context) {
               return Scaffold(
-                appBar: AppBar(title: Text('Elméleti Alapok')),
+                appBar: AppBar(title: Text('Kisfeszültség (LV) Rendszerek')),
                 body: ListView.builder(
                   padding: EdgeInsets.all(12),
                   itemCount: chapters.length,
@@ -237,8 +209,8 @@ jobs:
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: Colors.indigo.withOpacity(0.15),
-                          child: Text('${index + 1}.', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.indigo)),
+                          backgroundColor: Colors.blue.withOpacity(0.15),
+                          child: Text('${index + 1}.', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
                         ),
                         title: Text(ch.title, style: TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text(ch.subtitle, maxLines: 2, overflow: TextOverflow.ellipsis),
@@ -246,7 +218,7 @@ jobs:
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => TopicDetailScreen(section: ch, themeColor: Colors.indigo)),
+                            MaterialPageRoute(builder: (context) => TopicDetailScreen(section: ch, themeColor: Colors.blue)),
                           );
                         },
                       ),
@@ -261,69 +233,30 @@ jobs:
             final List<TopicSection> formulaCategories = [
               TopicSection(
                 '1. Alapvető egyenáramú és ohmikus képletek',
-                'Tiszta ellenállásos körökben érvényes összefüggések.',
+                'Tiszta ellenállásos körök összefüggései.',
                 [
                   'Ohm törvénye: U = I · R',
-                  'Áramerősség: I = U / R',
-                  'Ellenállás: R = U / I',
                   'Teljesítmény: P = U · I = I² · R = U² / R',
                   'Elektromos munka: W = P · t',
                 ],
               ),
               TopicSection(
-                '2. Vezetékek ellenállása és méretezése',
-                'A vezeték anyaga, hossza és keresztmetszete határozza meg a veszteséget.',
+                '2. Vezetékek ellenállása és feszültségesés',
+                'Méretezéshez használt képletek.',
                 [
-                  'Vezeték ellenállása: R = ρ · (l / A)',
-                  'Fajlagos ellenállás (ρ): Réz = 0,0175 Ω·mm²/m, Alumínium = 0,028 Ω·mm²/m',
-                  'Hossz (l): Egyfázisú körnél oda-vissza (2-szeres) távolsággal számolva!',
-                  'Keresztmetszet: A = ρ · (l / R)',
-                ],
-              ),
-              TopicSection(
-                '3. Feszültségesés kiszámítása',
-                'A feszültségesés mértéke a névleges feszültséghez képest max. 1-3% lehet.',
-                [
-                  'Egyfázisú (230V): ΔU = (2 · l · I · ρ) / A',
-                  'Háromfázisú (400V): ΔU = (√3 · l · I · ρ · cosφ) / A',
+                  'Vezeték ellenállása: R = ρ · (l / A) (Réz: 0,0175 Ω·mm²/m)',
+                  'Egyfázisú feszültségesés: ΔU = (2 · l · I · ρ) / A',
+                  'Háromfázisú feszültségesés: ΔU = (√3 · l · I · ρ · cosφ) / A',
                   'Százalékos esés: ε% = (ΔU / U_n) · 100',
                 ],
               ),
               TopicSection(
-                '4. Váltakozó áramú (AC) teljesítmények',
-                'Induktív és kapacitív terhelések fáziseltolódással (cosφ).',
+                '3. Váltakozó áram és Háromfázisú rendszerek',
+                'Ipari és hálózati teljesítmények.',
                 [
-                  'Látszólagos (S): S = U · I [VA]',
-                  'Hatásos (P): P = U · I · cosφ [W]',
-                  'Meddő (Q): Q = U · I · sinφ [var]',
-                  'Teljesítménytényező: cosφ = P / S',
-                ],
-              ),
-              TopicSection(
-                '5. Háromfázisú hálózatok képletei',
-                'Fázis- és vonali értékek aránya √3 ≈ 1,73.',
-                [
-                  'Háromfázisú hatásos teljesítmény: P = √3 · U_v · I · cosφ',
-                  'Csillag (Y): I_v = I_f és U_v = √3 · U_f',
-                  'Delta (Δ): U_v = U_f és I_v = √3 · I_f',
-                ],
-              ),
-              TopicSection(
-                '6. Ellenállások eredője',
-                'Soros és párhuzamos kapcsolások.',
-                [
-                  'Soros: R_e = R₁ + R₂ + ...',
-                  'Párhuzamos: 1 / R_e = (1 / R₁) + (1 / R₂) + ...',
-                  'Két ellenállás esetén (Replusz): R_e = (R₁ · R₂) / (R₁ + R₂)',
-                ],
-              ),
-              TopicSection(
-                '7. Transzformátorok és motorok',
-                'Áttételek, fordulatszám és hatásfok.',
-                [
-                  'Transzformátor áttétel: U₁ / U₂ = N₁ / N₂ = I₂ / I₁',
-                  'Szinkron fordulatszám: n₀ = (f · 60) / p',
-                  'Hatásfok (η): η = P_leadott / P_felvett',
+                  'Hatásos teljesítmény: P = √3 · U_v · I · cosφ',
+                  'Meddő teljesítmény: Q = √3 · U_v · I · sinφ',
+                  'Látszólagos teljesítmény: S = √3 · U_v · I',
                 ],
               ),
             ];
@@ -331,7 +264,7 @@ jobs:
             @override
             Widget build(BuildContext context) {
               return Scaffold(
-                appBar: AppBar(title: Text('Villanyszerelő Képletek')),
+                appBar: AppBar(title: Text('Szakmai Képletgyűjtemény')),
                 body: ListView.builder(
                   padding: EdgeInsets.all(12),
                   itemCount: formulaCategories.length,
@@ -445,7 +378,7 @@ jobs:
                 double current = power / voltage;
                 String wire = current <= 13 ? '1,5 mm²' : (current <= 20 ? '2,5 mm²' : (current <= 25 ? '4,0 mm²' : '6,0+ mm²'));
                 setState(() {
-                  currentResult = 'Szükséges áramerősség (I): ${current.toStringAsFixed(2)} A\\nAjánlott min. rézvezető: $wire';
+                  currentResult = 'Szükséges áramerősség (I): ${current.toStringAsFixed(2)} A\nAjánlott min. rézvezető: $wire';
                 });
               } else {
                 setState(() {
@@ -466,7 +399,7 @@ jobs:
                 double percent = (deltaU / un) * 100;
 
                 setState(() {
-                  dropResult = 'Feszültségesés (ΔU): ${deltaU.toStringAsFixed(2)} V\\nSzázalékos esés (ε%): ${percent.toStringAsFixed(2)} %\\n${percent <= 3.0 ? "✅ Megfelelő (< 3%)" : "⚠️ Túl magas feszültségesés (> 3%)!"}';
+                  dropResult = 'Feszültségesés (ΔU): ${deltaU.toStringAsFixed(2)} V\nSzázalékos esés (ε%): ${percent.toStringAsFixed(2)} %\n${percent <= 3.0 ? "✅ Megfelelő (< 3%)" : "⚠️ Túl magas feszültségesés (> 3%)!"}';
                 });
               } else {
                 setState(() {
@@ -478,7 +411,7 @@ jobs:
             @override
             Widget build(BuildContext context) {
               return Scaffold(
-                appBar: AppBar(title: Text('Számológépek')),
+                appBar: AppBar(title: Text('Interaktív Kalkulátorok')),
                 body: SingleChildScrollView(
                   padding: EdgeInsets.all(16.0),
                   child: Column(
@@ -547,6 +480,44 @@ jobs:
             }
           }
 
+          class LockedScreen extends StatelessWidget {
+            final String title;
+            LockedScreen({required this.title});
+
+            @override
+            Widget build(BuildContext context) {
+              return Scaffold(
+                appBar: AppBar(title: Text(title)),
+                body: Padding(
+                  padding: EdgeInsets.all(24.0),
+                  child: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.lock, size: 72, color: Colors.red[400]),
+                        SizedBox(height: 20),
+                        Text('Ez egy Prémium Szakmai Modul', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
+                        SizedBox(height: 10),
+                        Text('A(z) "$title" tartalom az ipari és nagytilalmi szabványokat, transzformátor és távvezeték méretezési kalkulátorokat tartalmazza.', textAlign: TextAlign.center, style: TextStyle(fontSize: 15, color: Colors.grey[700])),
+                        SizedBox(height: 30),
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700], foregroundColor: Colors.white, minimumSize: Size(double.infinity, 50)),
+                          icon: Icon(Icons.star),
+                          label: Text('Prémium Hozzáférés Feloldása', style: TextStyle(fontSize: 16)),
+                          onPressed: () {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text('Google Play Billing integráció hamarosan érkezik!')),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }
+          }
+
           class PlaceholderScreen extends StatelessWidget {
             final String title;
             PlaceholderScreen({required this.title});
@@ -559,7 +530,7 @@ jobs:
                   padding: EdgeInsets.all(16.0),
                   child: Center(
                     child: Text(
-                      'A(z) "$title" modul hamarosan feltöltésre kerül a saját anyagaiddal és képeiddel!',
+                      'A(z) "$title" modul hamarosan feltöltésre kerül a részletes anyagokkal!',
                       textAlign: TextAlign.center,
                       style: TextStyle(fontSize: 17, color: Colors.grey[700]),
                     ),
@@ -570,7 +541,6 @@ jobs:
           }
           EOF
 
-          # 3. Függőségek letöltése és build
           flutter pub get
           flutter build apk --release
 
