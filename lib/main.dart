@@ -32,7 +32,6 @@ jobs:
           import 'package:flutter/material.dart';
           import 'dart:math';
 
-          // Globális fejlesztői kapcsoló (True = Minden prémium elérhető teszteléshez)
           bool isDeveloperMode = true; 
 
           void main() => runApp(VillanyszereloApp());
@@ -88,8 +87,8 @@ jobs:
                   CalculatorsScreen(),
                 ),
                 MenuItemData(
-                  '4. Szabványok & Hivatkozások (MSZ / EN)',
-                  'Elérhető hatályos szabványcsaládok és előírások',
+                  '4. Hivatalos Szabványok (MSZ / EN)',
+                  'Részletes szabványtáblázatok és előírások',
                   Icons.menu_book,
                   Colors.brown,
                   StandardsScreen(),
@@ -195,77 +194,96 @@ jobs:
             TopicSection(this.title, this.subtitle, this.bulletPoints);
           }
 
-          // --- SZABVÁNYOK KÉPERNYŐ ---
+          // --- PONTOS SZABVÁNYOS KÉPERNYŐ ---
           class StandardsScreen extends StatelessWidget {
-            final List<TopicSection> standardsList = [
-              TopicSection(
-                'MSZ HD 60364 sorozat',
-                'Kisfeszültségű villamos berendezések létesítése (A villanyszerelés alapköve)',
-                [
-                  'MSZ HD 60364-1: Alapelvek, általános jellemzők meghatározása, fogalommeghatározások.',
-                  'MSZ HD 60364-4-41: Érintésvédelem (áramütés elleni védelem, alap- és hibavédelem, kiegészítő védelem FI-relével).',
-                  'MSZ HD 60364-4-43: Túláramvédelem (vezetők védelme túlterhelés és zárlat ellen).',
-                  'MSZ HD 60364-5-52: Kábelek és vezetékek kiválasztása és szerelése (terhelhetőség, feszültségesés).',
-                  'MSZ HD 60364-6: Ellenőrzés (első vizsgálat és időszakos felülvizsgálat).',
-                  'MSZ HD 60364-7 sorozat: Különleges berendezések vagy helyiségek (pl. fürdőszobák, uszodák, építkezések, napelemes rendszerek).',
-                ],
-              ),
-              TopicSection(
-                'MSZ EN 62305 sorozat',
-                'Villámvédelem (Kockázatelemzés és fizikai védelem)',
-                [
-                  'MSZ EN 62305-1: Általános elvek (kockázatok, zónák).',
-                  'MSZ EN 62305-2: Kockázatkezelés (gazdasági és személyi kockázatok számítása).',
-                  'MSZ EN 62305-3: Épületek fizikai károsodása és életveszély (felfogók, levezetők, földelések, LPL osztályok).',
-                  'MSZ EN 62305-4: Villamos és elektronikus rendszerek belső védelme (túlfeszültség-védelem, árnyékolás).',
-                ],
-              ),
-              TopicSection(
-                'MSZ EN 50110 sorozat',
-                'Villamos berendezések üzemeltetése',
-                [
-                  'MSZ EN 50110-1: Európai szabvány az üzemeltetési biztonságról, feszültség alatti munkavégzésről, felelősségi körökről (Kiszakaszolás 5 arany szabálya).',
-                ],
-              ),
-              TopicSection(
-                'MSZ EN IEC 61439 sorozat',
-                'Kisfeszültségű kapcsoló- és vezérlőberendezés-együttesek',
-                [
-                  'Elosztószekrények gyártási, tervezési, vizsgálati és tanúsítási szabványa (felváltotta a régi MSZ EN 60439-t).',
-                ],
-              ),
-            ];
-
             @override
             Widget build(BuildContext context) {
               return Scaffold(
-                appBar: AppBar(title: Text('Szabványok és Előírások')),
-                body: ListView.builder(
+                appBar: AppBar(title: Text('Hivatalos Szabványok és Előírások')),
+                body: ListView(
                   padding: EdgeInsets.all(12),
-                  itemCount: standardsList.length,
-                  itemBuilder: (context, index) {
-                    final std = standardsList[index];
-                    return Card(
-                      elevation: 2,
-                      margin: EdgeInsets.symmetric(vertical: 6),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: Colors.brown.withOpacity(0.15),
-                          child: Icon(Icons.bookmark, color: Colors.brown),
-                        ),
-                        title: Text(std.title, style: TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text(std.subtitle, maxLines: 2, overflow: TextOverflow.ellipsis),
-                        trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (context) => TopicDetailScreen(section: std, themeColor: Colors.brown)),
-                          );
-                        },
+                  children: [
+                    _buildStandardCard(
+                      context,
+                      '1. Általános Biztonsági, Érintésvédelmi és Létesítési Szabványok',
+                      'MSZ HD 60364 sorozat (A kisfeszültségű berendezések alaptörvénye)',
+                      [
+                        '• MSZ HD 60364-1 (Alapelvek): Kisfeszültségű villamos berendezések alapvető elvei, jellemzői és meghatározásai.',
+                        '• MSZ HD 60364-4-41 (Biztonságvédelem): Érintésvédelem (áramütés elleni védelem) a lakossági és ipari hálózatokban.',
+                        '• MSZ HD 60364-4-42 (Hőhatások elleni védelem): Tűzvédelem és termikus hatások elleni védelem villamos berendezésekben.',
+                        '• MSZ HD 60364-4-43 (Túláramvédelem): Vezetékek és berendezések védelme túláram (zárlat és túlterhelés) ellen.',
+                        '• MSZ HD 60364-5-52 (Kábelek és vezetékek): Kisfeszültségű kábel- és vezetékrendszerek kiválasztása és szerelése.',
+                        '• MSZ HD 60364-5-54 (Földelőberendezések): Földelőberendezések, védővezetők és védő-egyenpotenciálra hozó vezetők.',
+                        '• MSZ HD 60364-6 (Ellenőrzés): Létesítés utáni első felülvizsgálat és időszakos ellenőrzés (szemrevételezés, mérés).',
+                        '• MSZ HD 60364-7-... (Különleges berendezések): Speciális helyiségek (pl. fürdőszobák, uszodák, építkezések, mezőgazdasági helyek) követelményei.',
+                      ],
+                      Colors.blueGrey,
+                    ),
+                    _buildStandardCard(
+                      context,
+                      '2. Kábelek, Vezetékek és Jelölések Szabványai',
+                      'Azonosítási és kábelszabványok',
+                      [
+                        '• MSZ EN 60446 / MSZ HD 60446: Villamos rendszerek azonosítása színekkel vagy betűjelekkel (pl. kék a nulla N, zöld-sárga a védővezető PE, fekete/barna a fázis L).',
+                        '• MSZ 2364-481: Villamos berendezések tűzvédelmi osztályozása és biztonsági követelményei (részben átfedésben a HD 60364-gyel).',
+                        '• MSZ EN 50525 sorozat: Kisfeszültségű energiaellátó kábelek és vezetékek (pl. a hagyományos MFT / H07RN-F / H07V-U típusú vezetékek követelményei).',
+                      ],
+                      Colors.teal,
+                    ),
+                    _buildStandardCard(
+                      context,
+                      '3. Érintésvédelmi és Felülvizsgálati Szabványok',
+                      'Csatlakozási, üzemeltetési és gyártási előírások',
+                      [
+                        '• MSZ 447: Kisfeszültségű közcélú elosztóhálózatra való csatlakozás (pl. házi csatlakozások, mérőhelyek kialakítási szabályai az áramszolgáltatói elosztói engedélyesek hálózatán).',
+                        '• MSZ 1585: Villamos berendezések üzemeltetése (a korábbi MSZ 172 helyettesítője a munkavédelemben, azaz a "Villamos Biztonsági Szabályzat" – VBSZ).',
+                        '• MSZ EN 61439 sorozat: Kisfeszültségű kapcsolóberendezések és vezérlőberendezések szerelvényei (főelosztók, lakáselosztók gyártási és vizsgálati szabványa).',
+                      ],
+                      Colors.indigo,
+                    ),
+                    _buildStandardCard(
+                      context,
+                      '4. Villámvédelem és Túlfeszültség-védelem',
+                      'Épületek és hálózatok védelme',
+                      [
+                        '• MSZ EN 62305 sorozat: Villámvédelem (építmények villámvédelmi tervezése, kockázatértékelése, fizikai károk és életvédelem, villamos rendszerek védelme).',
+                        '• MSZ EN 60364-4-443: Épületek villamos berendezéseinek védelme a légköri eredetű túlfeszültségektől (túlfeszültség-levezetők, SPD-k alkalmazása).',
+                      ],
+                      Colors.deepOrange,
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            Widget _buildStandardCard(BuildContext context, String title, String subtitle, List<String> items, Color color) {
+              return Card(
+                elevation: 2,
+                margin: EdgeInsets.symmetric(vertical: 8),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                child: Padding(
+                  padding: EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.bookmark, color: color),
+                          SizedBox(width: 10),
+                          Expanded(
+                            child: Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: color)),
+                          ),
+                        ],
                       ),
-                    );
-                  },
+                      SizedBox(height: 4),
+                      Text(subtitle, style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: Colors.grey[700])),
+                      Divider(height: 20),
+                      ...items.map((item) => Padding(
+                        padding: EdgeInsets.symmetric(vertical: 4),
+                        child: Text(item, style: TextStyle(fontSize: 14, height: 1.3)),
+                      )).toList(),
+                    ],
+                  ),
                 ),
               );
             }
@@ -491,169 +509,3 @@ jobs:
               } else {
                 setState(() {
                   currentResult = 'Kérlek érvényes számokat adj meg!';
-                });
-              }
-            }
-
-            void calculateVoltageDrop() {
-              double? l = double.tryParse(lengthController.text.replaceAll(',', '.'));
-              double? i = double.tryParse(ampController.text.replaceAll(',', '.'));
-              double? a = double.tryParse(crossSectionController.text.replaceAll(',', '.'));
-
-              if (l != null && i != null && a != null && a > 0) {
-                double rho = isCopper ? 0.0175 : 0.028;
-                double un = isThreePhase ? 400.0 : 230.0;
-                double deltaU = isThreePhase ? (sqrt(3) * l * i * rho) / a : (2 * l * i * rho) / a;
-                double percent = (deltaU / un) * 100;
-
-                setState(() {
-                  dropResult = 'Feszültségesés (ΔU): ${deltaU.toStringAsFixed(2)} V\nSzázalékos esés (ε%): ${percent.toStringAsFixed(2)} %\n${percent <= 3.0 ? "✅ Megfelelő (< 3%)" : "⚠️ Túl magas feszültségesés (> 3%)!"}';
-                });
-              } else {
-                setState(() {
-                  dropResult = 'Kérlek minden mezőbe érvényes számot írj!';
-                });
-              }
-            }
-
-            @override
-            Widget build(BuildContext context) {
-              return Scaffold(
-                appBar: AppBar(title: Text('Interaktív Kalkulátorok')),
-                body: SingleChildScrollView(
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('1. Teljesítményből Áramerősség (I = P / U)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.blue[900])),
-                      SizedBox(height: 10),
-                      TextField(controller: powerController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Teljesítmény (Watt, pl. 3600)', border: OutlineInputBorder(), filled: true, fillColor: Colors.white)),
-                      SizedBox(height: 10),
-                      TextField(controller: voltageController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Feszültség (Volt, pl. 230)', border: OutlineInputBorder(), filled: true, fillColor: Colors.white)),
-                      SizedBox(height: 12),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 48), backgroundColor: Colors.blue[700], foregroundColor: Colors.white),
-                        onPressed: calculateCurrent,
-                        child: Text('Áramerősség Számolása', style: TextStyle(fontSize: 16)),
-                      ),
-                      SizedBox(height: 12),
-                      Container(
-                        padding: EdgeInsets.all(14),
-                        width: double.infinity,
-                        decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.blue.shade200)),
-                        child: Text(currentResult, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.blue[900])),
-                      ),
-                      SizedBox(height: 30),
-                      Divider(thickness: 2),
-                      SizedBox(height: 15),
-                      Text('2. Feszültségesés Kalkulátor (ΔU és ε%)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.teal[900])),
-                      SizedBox(height: 10),
-                      Row(
-                        children: [
-                          Expanded(child: ChoiceChip(label: Text('1 Fázis (230V)'), selected: !isThreePhase, onSelected: (val) => setState(() => isThreePhase = false))),
-                          SizedBox(width: 8),
-                          Expanded(child: ChoiceChip(label: Text('3 Fázis (400V)'), selected: isThreePhase, onSelected: (val) => setState(() => isThreePhase = true))),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(child: ChoiceChip(label: Text('Réz (Cu)'), selected: isCopper, onSelected: (val) => setState(() => isCopper = true))),
-                          SizedBox(width: 8),
-                          Expanded(child: ChoiceChip(label: Text('Alumínium (Al)'), selected: !isCopper, onSelected: (val) => setState(() => isCopper = false))),
-                        ],
-                      ),
-                      SizedBox(height: 10),
-                      TextField(controller: lengthController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Nyomvonal hossza (méter, pl. 25)', border: OutlineInputBorder(), filled: true, fillColor: Colors.white)),
-                      SizedBox(height: 10),
-                      TextField(controller: ampController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Áramerősség (Amper, pl. 16)', border: OutlineInputBorder(), filled: true, fillColor: Colors.white)),
-                      SizedBox(height: 10),
-                      TextField(controller: crossSectionController, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: 'Vezeték keresztmetszet (mm², pl. 2.5)', border: OutlineInputBorder(), filled: true, fillColor: Colors.white)),
-                      SizedBox(height: 12),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 48), backgroundColor: Colors.teal[700], foregroundColor: Colors.white),
-                        onPressed: calculateVoltageDrop,
-                        child: Text('Feszültségesés Számolása', style: TextStyle(fontSize: 16)),
-                      ),
-                      SizedBox(height: 12),
-                      Container(
-                        padding: EdgeInsets.all(14),
-                        width: double.infinity,
-                        decoration: BoxDecoration(color: Colors.teal[50], borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.teal.shade200)),
-                        child: Text(dropResult, style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.teal[900])),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            }
-          }
-
-          class LockedScreen extends StatelessWidget {
-            final String title;
-            LockedScreen({required this.title});
-
-            @override
-            Widget build(BuildContext context) {
-              return Scaffold(
-                appBar: AppBar(title: Text(title)),
-                body: Padding(
-                  padding: EdgeInsets.all(24.0),
-                  child: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.lock, size: 72, color: Colors.red[400]),
-                        SizedBox(height: 20),
-                        Text('Ez egy Prémium Szakmai Modul', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold), textAlign: TextAlign.center),
-                        SizedBox(height: 10),
-                        Text('A(z) "$title" tartalom az ipari és nagytilalmi szabványokat, transzformátor és távvezeték méretezési kalkulátorokat tartalmazza.', textAlign: TextAlign.center, style: TextStyle(fontSize: 15, color: Colors.grey[700])),
-                        SizedBox(height: 30),
-                        ElevatedButton.icon(
-                          style: ElevatedButton.styleFrom(backgroundColor: Colors.red[700], foregroundColor: Colors.white, minimumSize: Size(double.infinity, 50)),
-                          icon: Icon(Icons.star),
-                          label: Text('Prémium Előfizetés Igénylése', style: TextStyle(fontSize: 16)),
-                          onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Google Play Billing integráció hamarosan érkezik!')),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              );
-            }
-          }
-
-          class PlaceholderScreen extends StatelessWidget {
-            final String title;
-            PlaceholderScreen({required this.title});
-
-            @override
-            Widget build(BuildContext context) {
-              return Scaffold(
-                appBar: AppBar(title: Text(title)),
-                body: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Center(
-                    child: Text(
-                      'A(z) "$title" modul tartalma sikeresen betöltve (Fejlesztői Mód aktív).',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 17, color: Colors.grey[700]),
-                    ),
-                  ),
-                ),
-              );
-            }
-          }
-          EOF
-
-          flutter pub get
-          flutter build apk --release
-
-      - name: Kész APK feltoltese
-        uses: actions/upload-artifact@v4
-        with:
-          name: Elektrik-Home-Telepito
-          path: build/app/outputs/flutter-apk/app-release.apk
